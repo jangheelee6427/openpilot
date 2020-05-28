@@ -1,8 +1,13 @@
 from cereal import car
 from selfdrive.car.hyundai.values import DBC, STEER_THRESHOLD, FEATURES
+<<<<<<< HEAD
 from selfdrive.car.interfaces import CarStateBase
+=======
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 from opendbc.can.parser import CANParser
 from selfdrive.config import Conversions as CV
+from common.kalman.simple_kalman import KF1D
+from common.realtime import DT_CTRL
 
 GearShifter = car.CarState.GearShifter
 
@@ -285,7 +290,44 @@ def get_camera_parser(CP):
     ]
   return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 2)
 
+class CarState():
 
+  def __init__(self, CP):
+    self.CP = CP
+    # initialize can parser
+    self.car_fingerprint = CP.carFingerprint
+    self.left_blinker_on = 0
+    self.left_blinker_flash = 0
+    self.right_blinker_on = 0
+    self.right_blinker_flash = 0
+    self.lca_left = 0
+    self.lca_right = 0
+    self.no_radar = CP.sccBus == -1
+    self.mdps_bus = CP.mdpsBus
+    self.sas_bus = CP.sasBus
+    self.scc_bus = CP.sccBus
+
+    # Q = np.matrix([[10.0, 0.0], [0.0, 100.0]])
+    # R = 1e3
+    self.v_ego_kf = KF1D(x0=[[0.0], [0.0]],
+                         A=[[1.0, DT_CTRL], [0.0, 1.0]],
+                         C=[1.0, 0.0],
+                         K=[[0.12287673], [0.29666309]])
+
+  def update_speed_kf(self, v_ego_raw):
+    if abs(v_ego_raw - self.v_ego_kf.x[0][0]) > 2.0:  # Prevent large accelerations when car starts at non zero speed
+      self.v_ego_kf.x = [[v_ego_raw], [0.0]]
+
+    v_ego_x = self.v_ego_kf.update(v_ego_raw)
+    return float(v_ego_x[0]), float(v_ego_x[1])
+	
+  def update(self, cp, cp2, cp_cam):
+
+    cp_mdps = cp2 if self.mdps_bus else cp
+    cp_sas = cp2 if self.sas_bus else cp
+    cp_scc = cp2 if self.scc_bus == 1 else cp_cam if self.scc_bus == 2 else cp
+
+<<<<<<< HEAD
 class CarState(CarStateBase):
   def __init__(self, CP):
     super().__init__(CP)
@@ -305,6 +347,15 @@ class CarState(CarStateBase):
     
     self.door_all_closed = not any([cp.vl["CGW1"]['CF_Gway_DrvDrSw'],cp.vl["CGW1"]['CF_Gway_AstDrSw'],
                                    cp.vl["CGW2"]['CF_Gway_RLDrSw'], cp.vl["CGW2"]['CF_Gway_RRDrSw']])
+=======
+    # update prevs, update must run once per Loop
+    self.prev_left_blinker_on = self.left_blinker_on
+    self.prev_right_blinker_on = self.right_blinker_on
+    self.prev_left_blinker_flash = self.left_blinker_flash
+    self.prev_right_blinker_flash = self.right_blinker_flash
+
+    self.door_all_closed = True
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     self.seatbelt = cp.vl["CGW1"]['CF_Gway_DrvSeatBeltSw']
 
     self.brake_pressed = cp.vl["TCS13"]['DriverBraking']
@@ -323,6 +374,9 @@ class CarState(CarStateBase):
     self.v_wheel_rr = cp.vl["WHL_SPD11"]['WHL_SPD_RR'] * CV.KPH_TO_MS
     self.v_ego_raw = (self.v_wheel_fl + self.v_wheel_fr + self.v_wheel_rl + self.v_wheel_rr) / 4.
     self.v_ego, self.a_ego = self.update_speed_kf(self.v_ego_raw)
+    
+    self.clu_Vanz = cp.vl["CLU11"]["CF_Clu_Vanz"]
+    self.v_ego = self.clu_Vanz * CV.KPH_TO_MS
 
     self.low_speed_lockout = self.v_ego_raw < 1.0
 
@@ -336,8 +390,12 @@ class CarState(CarStateBase):
     self.angle_steers_rate = cp_sas.vl["SAS11"]['SAS_Speed']
     self.yaw_rate = cp.vl["ESP12"]['YAW_RATE']
     self.left_blinker_on = cp.vl["CGW1"]['CF_Gway_TSigLHSw']
-    self.right_blinker_on = cp.vl["CGW1"]['CF_Gway_TSigRHSw']
     self.left_blinker_flash = cp.vl["CGW1"]['CF_Gway_TurnSigLh']
+    self.right_blinker_on = cp.vl["CGW1"]['CF_Gway_TSigRHSw']
+<<<<<<< HEAD
+    self.left_blinker_flash = cp.vl["CGW1"]['CF_Gway_TurnSigLh']
+=======
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     self.right_blinker_flash = cp.vl["CGW1"]['CF_Gway_TurnSigRh']
     self.steer_override = abs(cp_mdps.vl["MDPS12"]['CR_Mdps_StrColTq']) > STEER_THRESHOLD
     self.steer_state = cp_mdps.vl["MDPS12"]['CF_Mdps_ToiActive'] #0 NOT ACTIVE, 1 ACTIVE
@@ -369,7 +427,11 @@ class CarState(CarStateBase):
       elif cp.vl["CLU15"]["CF_Clu_InhibitR"] == 1:
         self.gear_shifter = GearShifter.reverse
       else:
+<<<<<<< HEAD
         self.gear_shifter = GearShifter.unknown
+=======
+        self.gear_shifter = GearShifter.drive # fixed by KYD to resolve "Gear not D" issue
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     # Gear Selecton via TCU12
     elif self.car_fingerprint in FEATURES["use_tcu_gears"]:
       gear = cp.vl["TCU12"]["CUR_GR"]
@@ -380,7 +442,11 @@ class CarState(CarStateBase):
       elif gear > 0 and gear < 9:    # unaware of anything over 8 currently
         self.gear_shifter = GearShifter.drive
       else:
+<<<<<<< HEAD
         self.gear_shifter = GearShifter.unknown
+=======
+        self.gear_shifter = GearShifter.drive # fixed by KYD to resolve "Gear not D" issue
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     # Gear Selecton - This is only compatible with optima hybrid 2017
     elif self.car_fingerprint in FEATURES["use_elect_gears"]:
       gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
@@ -393,7 +459,11 @@ class CarState(CarStateBase):
       elif gear == 7:
         self.gear_shifter = GearShifter.reverse
       else:
+<<<<<<< HEAD
         self.gear_shifter = GearShifter.unknown
+=======
+        self.gear_shifter = GearShifter.drive # fixed by KYD to resolve "Gear not D" issue
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     # Gear Selecton - This is not compatible with all Kia/Hyundai's, But is the best way for those it is compatible with
     else:
       gear = cp.vl["LVR12"]["CF_Lvr_Gear"]
@@ -406,7 +476,11 @@ class CarState(CarStateBase):
       elif gear == 7:
         self.gear_shifter = GearShifter.reverse
       else:
+<<<<<<< HEAD
         self.gear_shifter = GearShifter.unknown
+=======
+        self.gear_shifter = GearShifter.drive # fixed by KYD to resolve "Gear not D" issue
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
     self.lkas_button_on = 7 > cp_cam.vl["LKAS11"]["CF_Lkas_LdwsSysState"] != 0
     self.lkas_error = cp_cam.vl["LKAS11"]["CF_Lkas_LdwsSysState"] == 7

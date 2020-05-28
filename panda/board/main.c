@@ -235,6 +235,12 @@ void usb_cb_ep3_out(void *usbdata, int len, bool hardwired) {
   }
 }
 
+void usb_cb_ep3_out_complete() {
+  if (can_tx_check_min_slots_free(MAX_CAN_MSGS_PER_BULK_TRANSFER)) {
+    usb_outep3_resume_if_paused();
+  }
+}
+
 void usb_cb_enumeration_complete() {
   puts("USB enumeration complete\n");
   is_enumerated = 1;
@@ -466,7 +472,17 @@ int usb_cb_control_msg(USB_Setup_TypeDef *setup, uint8_t *resp, bool hardwired) 
     case 0xde:
       if (setup->b.wValue.w < BUS_MAX) {
         can_speed[setup->b.wValue.w] = setup->b.wIndex.w;
-        can_init(CAN_NUM_FROM_BUS_NUM(setup->b.wValue.w));
+        bool ret = can_init(CAN_NUM_FROM_BUS_NUM(setup->b.wValue.w));
+        UNUSED(ret);
+      }
+      break;
+    // **** 0xdf: set unsafe mode
+    case 0xdf:
+      // you can only set this if you are in a non car safety mode
+      if ((current_safety_mode == SAFETY_SILENT) ||
+          (current_safety_mode == SAFETY_NOOUTPUT) ||
+          (current_safety_mode == SAFETY_ELM327)) {
+        unsafe_mode = setup->b.wValue.w;
       }
       break;
     // **** 0xe0: uart read
@@ -703,7 +719,14 @@ void TIM1_BRK_TIM9_IRQ_Handler(void) {
       puth(heartbeat_counter);
       puts(" seconds. Safety is set to SILENT mode.\n");
       if (current_safety_mode != SAFETY_ALLOUTPUT) {
+<<<<<<< HEAD
         set_safety_mode(SAFETY_ALLOUTPUT, 0U); // MDPS will hard if SAFETY_NOOUTPUT
+=======
+        set_safety_mode(SAFETY_ALLOUTPUT, 0U); // MDPS will hard fault if SAFETY_NOOUTPUT
+	   
+														   
+														
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
       }
 	 // MDPS will if panda sleep
      // if (power_save_status != POWER_SAVE_STATUS_ENABLED) {
@@ -713,6 +736,11 @@ void TIM1_BRK_TIM9_IRQ_Handler(void) {
       // Also disable fan and IR when the heartbeat goes missing
       current_board->set_fan_power(0U);
       current_board->set_ir_power(0U);
+
+	 // MDPS will fault if panda sleep
+     // if (power_save_status != POWER_SAVE_STATUS_ENABLED) {
+     //   set_power_save_state(POWER_SAVE_STATUS_ENABLED);
+     // }
     }
 
     // enter CDP mode when car starts to ensure we are charging a turned off EON
@@ -808,7 +836,11 @@ int main(void) {
   // use TIM2->CNT to read
 
   // init to SILENT and can silent
+<<<<<<< HEAD
   set_safety_mode(SAFETY_ALLOUTPUT, 0); // MDPS will hard if SAFETY_NOOUTPUT
+=======
+  set_safety_mode(SAFETY_ALLOUTPUT, 0); // MDPS will hard fault if SAFETY_NOOUTPUT
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
   // enable CAN TXs
   current_board->enable_can_transcievers(true);

@@ -13,12 +13,17 @@ extern "C"{
 #include "slplay.h"
 }
 
-void set_volume(int volume) {
-  char volume_change_cmd[64];
-  sprintf(volume_change_cmd, "service call audio 3 i32 3 i32 %d i32 1 &", volume);
+int last_volume = 0;
 
-  // 5 second timeout at 60fps
-  int volume_changed = system(volume_change_cmd);
+void set_volume(int volume) {
+  if (last_volume != volume) {
+    char volume_change_cmd[64];
+    sprintf(volume_change_cmd, "service call audio 3 i32 3 i32 %d i32 1 &", volume);
+
+    // 5 second timeout at 60fps
+    int volume_changed = system(volume_change_cmd);
+    last_volume = volume;
+  }
 }
 
 
@@ -30,6 +35,14 @@ sound_file sound_table[] = {
   { cereal_CarControl_HUDControl_AudibleAlert_chimeWarningRepeat, "../assets/sounds/warning_repeat.wav", true },
   { cereal_CarControl_HUDControl_AudibleAlert_chimeError, "../assets/sounds/error.wav", false },
   { cereal_CarControl_HUDControl_AudibleAlert_chimePrompt, "../assets/sounds/error.wav", false },
+{ cereal_CarControl_HUDControl_AudibleAlert_chimeReady, "../assets/sounds/ready.wav", false },
+  { cereal_CarControl_HUDControl_AudibleAlert_chimeDoorOpen, "../assets/sounds/dooropen.wav", false },
+  { cereal_CarControl_HUDControl_AudibleAlert_chimeGearDrive, "../assets/sounds/geardrive.wav", false },
+  { cereal_CarControl_HUDControl_AudibleAlert_chimeLaneChange, "../assets/sounds/lanechange.wav", false },
+  { cereal_CarControl_HUDControl_AudibleAlert_chimeLaneDeparture, "../assets/sounds/lanedeparture.wav", false },
+  { cereal_CarControl_HUDControl_AudibleAlert_chimeRoadWarning, "../assets/sounds/roadwarning.wav", false },
+  { cereal_CarControl_HUDControl_AudibleAlert_chimeSeatBelt, "../assets/sounds/seatbelt.wav", false },
+  { cereal_CarControl_HUDControl_AudibleAlert_chimeViewUncertain, "../assets/sounds/viewuncertain.wav", false },
   { cereal_CarControl_HUDControl_AudibleAlert_none, NULL, false },
 };
 

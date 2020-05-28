@@ -19,6 +19,7 @@ struct CarEvent @0x9b1657f34caf3ad3 {
   immediateDisable @6 :Bool;
   preEnable @7 :Bool;
   permanent @8 :Bool;
+  resetVCruise @9 :Bool;
 
   enum EventName @0xbaa8c5d505f727de {
     # TODO: copy from error list
@@ -91,11 +92,25 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     carUnrecognized @66;
     radarCommIssue @67;
     driverMonitorLowAcc @68;
+<<<<<<< HEAD
     lkasButtonOff @69;
     rightLCAbsm @70;
     leftLCAbsm @71;
     preventLCA @72;
     turningIndicatorOn @73;
+=======
+    manualSteeringRequired @69;
+    manualSteeringRequiredBlinkersOn @70;
+	  turningIndicatorOn @71;
+    lkasButtonOff @72;
+    rightLCAbsm @73;
+    leftLCAbsm @74;
+    preventLCA @75;
+    invalidLkasSetting @76;
+    speedTooHigh @77;
+    laneChangeBlocked @78;
+    relayMalfunction @79;
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
   }
 }
 
@@ -132,6 +147,7 @@ struct CarState {
   steeringRateLimited @29 :Bool;    # if the torque is limited by the rate limiter
   stockAeb @30 :Bool;
   stockFcw @31 :Bool;
+  espDisabled @32 :Bool;
 
   # cruise state
   cruiseState @10 :CruiseState;
@@ -144,20 +160,38 @@ struct CarState {
   leftBlinker @20 :Bool;
   rightBlinker @21 :Bool;
   genericToggle @23 :Bool;
+  distanceToggle @33 :Float32;
+  laneDepartureToggle @34 :Bool;
 
   # lock info
   doorOpen @24 :Bool;
   seatbeltUnlatched @25 :Bool;
   canValid @26 :Bool;
 
+
   # clutch (manual transmission only)
   clutchPressed @28 :Bool;
 
+<<<<<<< HEAD
   lcaLeft @32 :Bool;
   lcaRight @33 :Bool;
   
+=======
+  readdistancelines @36 :Float32;
+  lkMode @35 :Bool;
+  
+  lcaLeft @39 :Bool;
+  lcaRight @40 :Bool;
+
+
+
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
   # which packets this state came from
   canMonoTimes @12: List(UInt64);
+
+  # blindspot sensors
+  leftBlindspot @37 :Bool; # Is there something blocking the left lane change
+  rightBlindspot @38 :Bool; # Is there something blocking the right lane change
 
   struct WheelSpeeds {
     # optional wheel speeds
@@ -312,6 +346,14 @@ struct CarControl {
       chimeWarning2 @5;
       chimeWarningRepeat @6;
       chimePrompt @7;
+      chimeReady @8;
+      chimeDoorOpen @9;
+      chimeGearDrive @10;
+      chimeLaneChange @11;
+      chimeLaneDeparture @12;
+      chimeRoadWarning @13;
+      chimeSeatBelt @14;
+      chimeViewUncertain @15;
     }
   }
 }
@@ -382,10 +424,18 @@ struct CarParams {
   radarTimeStep @45: Float32 = 0.05;  # time delta between radar updates, 20Hz is very standard
   communityFeature @46: Bool;  # true if a community maintained feature is detected
   fingerprintSource @49: FingerprintSource;
+<<<<<<< HEAD
   mdpsBus @50: Int8;
   sasBus @51: Int8;
   sccBus @52: Int8;
   autoLcaEnabled @53: Int8;
+=======
+  networkLocation @50 :NetworkLocation;  # Where Panda/C2 is integrated into the car's CAN network
+  mdpsBus @51: Int8;
+  sasBus @52: Int8;
+  sccBus @53: Int8;
+  autoLcaEnabled @54: Int8;
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
   struct LateralParams {
     torqueBP @0 :List(Int32);
@@ -453,6 +503,7 @@ struct CarParams {
     noOutput @19;  # like silent but without silent CAN TXs
     hondaBoschHarness @20;
     volkswagenPq @21;
+    subaruLegacy @22;  # pre-Global platform
   }
 
   enum SteerControlType {
@@ -462,8 +513,9 @@ struct CarParams {
 
   enum TransmissionType {
     unknown @0;
-    automatic @1;
-    manual @2;
+    automatic @1;  # Traditional auto, including DSG
+    manual @2;  # True "stick shift" only
+    direct @3;  # Electric vehicle or other direct drive
   }
 
   struct CarFw {
@@ -480,15 +532,31 @@ struct CarParams {
     fwdCamera @3;
     engine @4;
     unknown @5;
+    transmission @8; # Transmission Control Module
+    srs @9; # airbag
+    gateway @10; # can gateway
+    hud @11; # heads up display
+    combinationMeter @12; # instrument cluster
 
     # Toyota only
     dsu @6;
     apgs @7;
+
+    # Honda only
+    vsa @13; # Vehicle Stability Assist
+    programmedFuelInjection @14;
+    electricBrakeBooster @15;
+    shiftByWire @16;
   }
 
   enum FingerprintSource {
     can @0;
     fw @1;
     fixed @2;
+  }
+
+  enum NetworkLocation {
+    fwdCamera @0;  # Standard/default integration at LKAS camera
+    gateway @1;    # Integration at vehicle's CAN gateway
   }
 }

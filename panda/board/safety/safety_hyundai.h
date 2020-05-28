@@ -6,6 +6,11 @@ const int HYUNDAI_MAX_RATE_DOWN = 7;
 const int HYUNDAI_DRIVER_TORQUE_ALLOWANCE = 50;
 const int HYUNDAI_DRIVER_TORQUE_FACTOR = 2;
 const AddrBus HYUNDAI_TX_MSGS[] = {{832, 0}, {832, 1}, {1265, 0}, {1265, 1}, {1265, 2}, {593, 2}, {1057, 0}};
+<<<<<<< HEAD
+=======
+// const AddrBus HYUNDAI_TX_MSGS[] = {{832, 0}, {832, 1}, {1265, 0}, {1265, 1}, {1265, 2}, {593, 2}, {1057, 0}, {1157, 0}};
+const int HYUNDAI_STANDSTILL_THRSLD = 30;  // ~1kph
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
 // TODO: do checksum and counter checks
 AddrCheckStruct hyundai_rx_checks[] = {
@@ -70,6 +75,10 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
       hyundai_cruise_engaged_last = cruise_engaged;
     }
     // cruise control for car without SCC
+<<<<<<< HEAD
+=======
+															
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     if (addr == 871 && !hyundai_has_scc && OP_SCC_live) {
       // first byte
       int cruise_engaged = (GET_BYTES_04(to_push) & 0xFF);
@@ -81,6 +90,11 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
       }
       hyundai_cruise_engaged_last = cruise_engaged;
     }
+<<<<<<< HEAD
+=======
+
+												  
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     if (addr == 608 && !hyundai_has_scc && !OP_SCC_live) {
       // bit 25
       int cruise_engaged = (GET_BYTES_04(to_push) >> 25 & 0x1); // ACC main_on signal
@@ -197,7 +211,10 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   if (addr == 593) {OP_MDPS_live = 20;}
   if ((addr == 1265) && (GET_BYTES_04(to_send) & 0x7) == 0) {OP_CLU_live = 20;} // only count non-button msg
   if (addr == 1057) {OP_SCC_live = 20;}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
   // 1 allows the message through
   return tx;
 }

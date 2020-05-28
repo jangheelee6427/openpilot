@@ -1,8 +1,15 @@
 from common.numpy_fast import interp
 import numpy as np
+from selfdrive.kegman_conf import kegman_conf
 from cereal import log
 
-CAMERA_OFFSET = 0.06  # m from center car to camera
+kegman = kegman_conf()
+CAMERA_OFFSET = float(kegman.conf['cameraOffset'])  # m from center car to camera
+
+#zorrobyte
+def mean(numbers): 
+     return float(sum(numbers)) / max(len(numbers), 1) 
+
 
 def compute_path_pinv(l=50):
   deg = 3
@@ -16,11 +23,22 @@ def model_polyfit(points, path_pinv):
   return np.dot(path_pinv, [float(x) for x in points])
 
 
-def calc_d_poly(l_poly, r_poly, p_poly, l_prob, r_prob, lane_width):
+def eval_poly(poly, x):
+  return poly[3] + poly[2]*x + poly[1]*x**2 + poly[0]*x**3
+
+
+def calc_d_poly(l_poly, r_poly, p_poly, l_prob, r_prob, lane_width, v_ego):
   # This will improve behaviour when lanes suddenly widen
+  # these numbers were tested on 2000segments and found to work well
   lane_width = min(4.0, lane_width)
-  l_prob = l_prob * interp(abs(l_poly[3]), [2, 2.5], [1.0, 0.0])
-  r_prob = r_prob * interp(abs(r_poly[3]), [2, 2.5], [1.0, 0.0])
+  width_poly = l_poly - r_poly
+  prob_mods = []
+  for t_check in [0.0, 1.5, 3.0]:
+    width_at_t = eval_poly(width_poly, t_check * (v_ego + 7))
+    prob_mods.append(interp(width_at_t, [4.0, 5.0], [1.0, 0.0]))
+  mod = min(prob_mods)
+  l_prob = mod * l_prob
+  r_prob = mod * r_prob
 
   path_from_left_lane = l_poly.copy()
   path_from_left_lane[3] -= lane_width / 2.0
@@ -40,10 +58,14 @@ class LanePlanner():
     self.p_poly = [0., 0., 0., 0.]
     self.d_poly = [0., 0., 0., 0.]
 
-    self.lane_width_estimate = 3.7
-    self.lane_width_certainty = 1.0
-    self.lane_width = 3.7
-
+    #self.lane_width_estimate = 2.85 #comma default
+    #self.lane_width_certainty = 1.0 #comma default
+    #self.lane_width = 2.85 #comma default
+    #zorro
+    self.lane_width = 2.85
+    self.readings = []
+    self.frame = 0
+    
     self.l_prob = 0.
     self.r_prob = 0.
 
@@ -65,9 +87,9 @@ class LanePlanner():
     self.l_prob = md.leftLane.prob  # left line prob
     self.r_prob = md.rightLane.prob  # right line prob
 
-    if len(md.meta.desirePrediction):
-      self.l_lane_change_prob = md.meta.desirePrediction[log.PathPlan.Desire.laneChangeLeft - 1]
-      self.r_lane_change_prob = md.meta.desirePrediction[log.PathPlan.Desire.laneChangeRight - 1]
+    if len(md.meta.desireState):
+      self.l_lane_change_prob = md.meta.desireState[log.PathPlan.Desire.laneChangeLeft - 1]
+      self.r_lane_change_prob = md.meta.desireState[log.PathPlan.Desire.laneChangeRight - 1]
 
   def update_d_poly(self, v_ego):
     # only offset left and right lane lines; offsetting p_poly does not make sense
@@ -75,14 +97,33 @@ class LanePlanner():
     self.r_poly[3] += CAMERA_OFFSET
 
     # Find current lanewidth
-    self.lane_width_certainty += 0.05 * (self.l_prob * self.r_prob - self.lane_width_certainty)
-    current_lane_width = abs(self.l_poly[3] - self.r_poly[3])
-    self.lane_width_estimate += 0.005 * (current_lane_width - self.lane_width_estimate)
-    speed_lane_width = interp(v_ego, [0., 31.], [2.8, 3.5])
-    self.lane_width = self.lane_width_certainty * self.lane_width_estimate + \
-                      (1 - self.lane_width_certainty) * speed_lane_width
+    #self.lane_width_certainty += 0.05 * (self.l_prob * self.r_prob - self.lane_width_certainty)
+    #current_lane_width = abs(self.l_poly[3] - self.r_poly[3])
+    #self.lane_width_estimate += 0.005 * (current_lane_width - self.lane_width_estimate)
+    #speed_lane_width = interp(v_ego, [0., 31.], [2.85, 3.5])
+    #self.lane_width = self.lane_width_certainty * self.lane_width_estimate + \
+    #                  (1 - self.lane_width_certainty) * speed_lane_width
 
-    self.d_poly = calc_d_poly(self.l_poly, self.r_poly, self.p_poly, self.l_prob, self.r_prob, self.lane_width)
+    #zorrobyte code
+    # Find current lanewidth
+    if self.l_prob > 0.49 and self.r_prob > 0.49:
+      self.frame += 1
+      if self.frame % 20 == 0:
+        self.frame = 0
+        current_lane_width = sorted((2.5, abs(self.l_poly[3] - self.r_poly[3]), 3.5))[1]
+        max_samples = 30
+        self.readings.append(current_lane_width)
+        self.lane_width = mean(self.readings)
+        if len(self.readings) == max_samples:
+          self.readings.pop(0)
+
+    #zorrobyte
+    # Don't exit dive
+    if abs(self.l_poly[3] - self.r_poly[3]) > self.lane_width:
+      self.r_prob = self.r_prob / interp(self.l_prob, [0, 1], [1, 3])
+    
+
+    self.d_poly = calc_d_poly(self.l_poly, self.r_poly, self.p_poly, self.l_prob, self.r_prob, self.lane_width, v_ego)
 
   def update(self, v_ego, md):
     self.parse_model(md)
