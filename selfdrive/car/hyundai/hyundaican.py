@@ -7,18 +7,11 @@ def create_lkas11(packer, car_fingerprint, bus, apply_steer, steer_req, cnt, ena
                                    lane_visible, left_lane_depart, right_lane_depart, keep_stock=False):
   values = {
     "CF_Lkas_Bca_R": lkas11["CF_Lkas_Bca_R"] if keep_stock else 3,
-<<<<<<< HEAD
-    "CF_Lkas_LdwsSysState": lane_visible,
-    "CF_Lkas_SysWarning": hud_alert,
-    "CF_Lkas_LdwsLHWarning": left_lane_depart,
-    "CF_Lkas_LdwsRHWarning": right_lane_depart,
-=======
     #"CF_Lkas_LdwsSysState": 3 if steer_req else lane_visible,
     "CF_Lkas_LdwsSysState": 3 if enabled else 1,
     "CF_Lkas_SysWarning": hud_alert,
     "CF_Lkas_LdwsLHWarning": lkas11["CF_Lkas_LdwsLHWarning"],
     "CF_Lkas_LdwsRHWarning": lkas11["CF_Lkas_LdwsRHWarning"],
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     "CF_Lkas_HbaLamp": lkas11["CF_Lkas_HbaLamp"] if keep_stock else 0,
     "CF_Lkas_FcwBasReq": lkas11["CF_Lkas_FcwBasReq"] if keep_stock else 0,
     "CR_Lkas_StrToqReq": apply_steer,
@@ -41,12 +34,6 @@ def create_lkas11(packer, car_fingerprint, bus, apply_steer, steer_req, cnt, ena
     values["CF_Lkas_HbaOpt"] = lkas11["CF_Lkas_HbaOpt"] if keep_stock else 1
     values["CF_Lkas_FcwOpt_USM"] = lkas11["CF_Lkas_FcwOpt_USM"] if keep_stock else 2
     values["CF_Lkas_LdwsOpt_USM"] = lkas11["CF_Lkas_LdwsOpt_USM"] if keep_stock else 0
-<<<<<<< HEAD
-  if car_fingerprint == CAR.KIA_OPTIMA:
-    values["CF_Lkas_Bca_R"] = 0
-    values["CF_Lkas_HbaOpt"] = lkas11["CF_Lkas_HbaOpt"] if keep_stock else 1
-    values["CF_Lkas_FcwOpt_USM"] = lkas11["CF_Lkas_FcwOpt_USM"] if keep_stock else 0
-=======
   if car_fingerprint == CAR.K5:
     values["CF_Lkas_Bca_R"] = 0
     values["CF_Lkas_HbaOpt"] = lkas11["CF_Lkas_HbaOpt"] if keep_stock else 1
@@ -72,7 +59,6 @@ def create_lkas11(packer, car_fingerprint, bus, apply_steer, steer_req, cnt, ena
     # SysWarning 6 = keep hands on wheel (red) + beep
     # Note: the warning is hidden while the blinkers are on
     values["CF_Lkas_SysWarning"] = 4 if hud_alert else 0
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
   dat = packer.make_can_msg("LKAS11", 0, values)[2]
 
@@ -105,62 +91,6 @@ def create_clu11(packer, bus, clu11, button, speed, cnt):
     "CF_Clu_CluInfo": clu11["CF_Clu_CluInfo"],
     "CF_Clu_AmpInfo": clu11["CF_Clu_AmpInfo"],
     "CF_Clu_AliveCnt1": cnt,
-<<<<<<< HEAD
-  }
-
-  return packer.make_can_msg("CLU11", bus, values)
-
-def create_scc12(packer, apply_accel, enabled, cnt, scc12):
-  values = {
-    "CF_VSM_Prefill": scc12["CF_VSM_Prefill"],
-    "CF_VSM_DecCmdAct": scc12["CF_VSM_DecCmdAct"],
-    "CF_VSM_HBACmd": scc12["CF_VSM_HBACmd"],
-    "CF_VSM_Warn": scc12["CF_VSM_Warn"],
-    "CF_VSM_Stat": scc12["CF_VSM_Stat"],
-    "CF_VSM_BeltCmd": scc12["CF_VSM_BeltCmd"],
-    "ACCFailInfo": scc12["ACCFailInfo"],
-    "ACCMode": scc12["ACCMode"],
-    "StopReq": scc12["StopReq"],
-    "CR_VSM_DecCmd": scc12["CR_VSM_DecCmd"],
-    "aReqMax": apply_accel if enabled and scc12["ACCMode"] == 1 else scc12["aReqMax"],
-    "TakeOverReq": scc12["TakeOverReq"],
-    "PreFill": scc12["PreFill"],
-    "aReqMin": apply_accel if enabled and scc12["ACCMode"] == 1 else scc12["aReqMin"],
-    "CF_VSM_ConfMode": scc12["CF_VSM_ConfMode"],
-    "AEB_Failinfo": scc12["AEB_Failinfo"],
-    "AEB_Status": scc12["AEB_Status"],
-    "AEB_CmdAct": scc12["AEB_CmdAct"],
-    "AEB_StopReq": scc12["AEB_StopReq"],
-    "CR_VSM_Alive": cnt,
-    "CR_VSM_ChkSum": 0,
-  }
-
-  dat = packer.make_can_msg("SCC12", 0, values)[2]
-  values["CR_VSM_ChkSum"] = 16 - sum([sum(divmod(i, 16)) for i in dat]) % 16
-
-  return packer.make_can_msg("SCC12", 0, values)
-
-def create_mdps12(packer, car_fingerprint, cnt, mdps12):
-  values = {
-    "CR_Mdps_StrColTq": mdps12["CR_Mdps_StrColTq"],
-    "CF_Mdps_Def": mdps12["CF_Mdps_Def"],
-    "CF_Mdps_ToiActive": 0,
-    "CF_Mdps_ToiUnavail": 1,
-    "CF_Mdps_MsgCount2": cnt,
-    "CF_Mdps_Chksum2": 0,
-    "CF_Mdps_ToiFlt": mdps12["CF_Mdps_ToiFlt"],
-    "CF_Mdps_SErr": mdps12["CF_Mdps_SErr"],
-    "CR_Mdps_StrTq": mdps12["CR_Mdps_StrTq"],
-    "CF_Mdps_FailStat": mdps12["CF_Mdps_FailStat"],
-    "CR_Mdps_OutTq": mdps12["CR_Mdps_OutTq"],
-  }
-
-  dat = packer.make_can_msg("MDPS12", 2, values)[2]
-  checksum = sum(dat) % 256
-  values["CF_Mdps_Chksum2"] = checksum
-
-  return packer.make_can_msg("MDPS12", 2, values)
-=======
   }
 
   return packer.make_can_msg("CLU11", bus, values)
@@ -234,4 +164,3 @@ def create_lfa_mfa(packer, cnt, enabled):
   # HDA_USM: nothing
 
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec

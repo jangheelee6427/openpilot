@@ -62,28 +62,16 @@ class Alert():
 ALERTS = [
   Alert(
       "turningIndicatorOn",
-<<<<<<< HEAD
-      "Steer Unavailable while Turning",
-=======
       "턴 시그널 작동 중 핸들을 잡아주세요",
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
       "",
       AlertStatus.userPrompt, AlertSize.small,
       Priority.HIGH, VisualAlert.none, AudibleAlert.none, 0., 0., .1),
   Alert(
       "lkasButtonOff",
-<<<<<<< HEAD
-      "LKAS button off",
-      "",
-      AlertStatus.userPrompt, AlertSize.small,
-      Priority.HIGH, VisualAlert.none, AudibleAlert.none, 0., 0., .1),
-
-=======
       "오픈파일럿 사용을 위해 차량의 LKAS 버튼을 눌러주세요",
       "",
       AlertStatus.userPrompt, AlertSize.small,
       Priority.HIGH, VisualAlert.none, AudibleAlert.none, 0., 0., .1),
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
   # Miscellaneous alerts
   Alert(
       "enable",
@@ -289,33 +277,6 @@ ALERTS = [
 
   Alert(
       "laneChange",
-<<<<<<< HEAD
-      "Changing Lane",
-      "Monitor Other Vehicles",
-      AlertStatus.normal, AlertSize.mid,
-      Priority.LOW, VisualAlert.steerRequired, AudibleAlert.none, .0, .1, .1),
-  
-    Alert(
-      "rightLCAbsm",
-      "Vehicle in Right Lane",
-      "Waiting for Lane to be clear",
-      AlertStatus.userPrompt, AlertSize.mid,
-      Priority.MID, VisualAlert.steerRequired, AudibleAlert.none, 0., 0.4, .3),
-  
-  Alert(
-      "leftLCAbsm",
-      "Vehicle in Left Lane",
-      "Waiting for Lane to be clear",
-      AlertStatus.userPrompt, AlertSize.mid,
-      Priority.MID, VisualAlert.steerRequired, AudibleAlert.none, 0., 0.4, .3),
-  
-  Alert(
-      "preventLCA",
-      "TAKE CONTROL",
-      "Lane Change Cancelled, Lane Unsafe",
-      AlertStatus.critical, AlertSize.full,
-      Priority.HIGH, VisualAlert.none, AudibleAlert.chimeWarningRepeat, .4, 3., 3.,),
-=======
       "차선 변경 중",
       "다른 차량에 주의하세요",
       AlertStatus.normal, AlertSize.mid,
@@ -341,7 +302,6 @@ ALERTS = [
       "도로 상황 불안으로 차선변경이 취소되었습니다",
       AlertStatus.critical, AlertSize.full,
       Priority.HIGH, VisualAlert.steerRequired, AudibleAlert.chimeWarningRepeat, .4, 3., 3.,),
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
 
   Alert(

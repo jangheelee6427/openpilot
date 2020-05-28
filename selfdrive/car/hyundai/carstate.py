@@ -1,9 +1,5 @@
 from cereal import car
 from selfdrive.car.hyundai.values import DBC, STEER_THRESHOLD, FEATURES
-<<<<<<< HEAD
-from selfdrive.car.interfaces import CarStateBase
-=======
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 from opendbc.can.parser import CANParser
 from selfdrive.config import Conversions as CV
 from common.kalman.simple_kalman import KF1D
@@ -327,27 +323,6 @@ class CarState():
     cp_sas = cp2 if self.sas_bus else cp
     cp_scc = cp2 if self.scc_bus == 1 else cp_cam if self.scc_bus == 2 else cp
 
-<<<<<<< HEAD
-class CarState(CarStateBase):
-  def __init__(self, CP):
-    super().__init__(CP)
-    self.no_radar = CP.sccBus == -1
-    self.mdps_bus = CP.mdpsBus
-    self.sas_bus = CP.sasBus
-    self.scc_bus = CP.sccBus
-
-  def update(self, cp, cp2, cp_cam):
-    cp_mdps = cp2 if self.mdps_bus else cp
-    cp_sas = cp2 if self.sas_bus else cp
-    cp_scc = cp2 if self.scc_bus == 1 else cp_cam if self.scc_bus == 2 else cp
-
-    # update prevs, update must run once per Loop
-    self.prev_left_blinker_on = self.left_blinker_on
-    self.prev_right_blinker_on = self.right_blinker_on
-    
-    self.door_all_closed = not any([cp.vl["CGW1"]['CF_Gway_DrvDrSw'],cp.vl["CGW1"]['CF_Gway_AstDrSw'],
-                                   cp.vl["CGW2"]['CF_Gway_RLDrSw'], cp.vl["CGW2"]['CF_Gway_RRDrSw']])
-=======
     # update prevs, update must run once per Loop
     self.prev_left_blinker_on = self.left_blinker_on
     self.prev_right_blinker_on = self.right_blinker_on
@@ -355,7 +330,6 @@ class CarState(CarStateBase):
     self.prev_right_blinker_flash = self.right_blinker_flash
 
     self.door_all_closed = True
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     self.seatbelt = cp.vl["CGW1"]['CF_Gway_DrvSeatBeltSw']
 
     self.brake_pressed = cp.vl["TCS13"]['DriverBraking']
@@ -392,10 +366,6 @@ class CarState(CarStateBase):
     self.left_blinker_on = cp.vl["CGW1"]['CF_Gway_TSigLHSw']
     self.left_blinker_flash = cp.vl["CGW1"]['CF_Gway_TurnSigLh']
     self.right_blinker_on = cp.vl["CGW1"]['CF_Gway_TSigRHSw']
-<<<<<<< HEAD
-    self.left_blinker_flash = cp.vl["CGW1"]['CF_Gway_TurnSigLh']
-=======
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     self.right_blinker_flash = cp.vl["CGW1"]['CF_Gway_TurnSigRh']
     self.steer_override = abs(cp_mdps.vl["MDPS12"]['CR_Mdps_StrColTq']) > STEER_THRESHOLD
     self.steer_state = cp_mdps.vl["MDPS12"]['CF_Mdps_ToiActive'] #0 NOT ACTIVE, 1 ACTIVE
@@ -427,11 +397,7 @@ class CarState(CarStateBase):
       elif cp.vl["CLU15"]["CF_Clu_InhibitR"] == 1:
         self.gear_shifter = GearShifter.reverse
       else:
-<<<<<<< HEAD
-        self.gear_shifter = GearShifter.unknown
-=======
         self.gear_shifter = GearShifter.drive # fixed by KYD to resolve "Gear not D" issue
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     # Gear Selecton via TCU12
     elif self.car_fingerprint in FEATURES["use_tcu_gears"]:
       gear = cp.vl["TCU12"]["CUR_GR"]
@@ -442,11 +408,7 @@ class CarState(CarStateBase):
       elif gear > 0 and gear < 9:    # unaware of anything over 8 currently
         self.gear_shifter = GearShifter.drive
       else:
-<<<<<<< HEAD
-        self.gear_shifter = GearShifter.unknown
-=======
         self.gear_shifter = GearShifter.drive # fixed by KYD to resolve "Gear not D" issue
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     # Gear Selecton - This is only compatible with optima hybrid 2017
     elif self.car_fingerprint in FEATURES["use_elect_gears"]:
       gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
@@ -459,11 +421,7 @@ class CarState(CarStateBase):
       elif gear == 7:
         self.gear_shifter = GearShifter.reverse
       else:
-<<<<<<< HEAD
-        self.gear_shifter = GearShifter.unknown
-=======
         self.gear_shifter = GearShifter.drive # fixed by KYD to resolve "Gear not D" issue
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     # Gear Selecton - This is not compatible with all Kia/Hyundai's, But is the best way for those it is compatible with
     else:
       gear = cp.vl["LVR12"]["CF_Lvr_Gear"]
@@ -476,11 +434,7 @@ class CarState(CarStateBase):
       elif gear == 7:
         self.gear_shifter = GearShifter.reverse
       else:
-<<<<<<< HEAD
-        self.gear_shifter = GearShifter.unknown
-=======
         self.gear_shifter = GearShifter.drive # fixed by KYD to resolve "Gear not D" issue
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
     self.lkas_button_on = 7 > cp_cam.vl["LKAS11"]["CF_Lkas_LdwsSysState"] != 0
     self.lkas_error = cp_cam.vl["LKAS11"]["CF_Lkas_LdwsSysState"] == 7

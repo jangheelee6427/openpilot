@@ -92,13 +92,6 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     carUnrecognized @66;
     radarCommIssue @67;
     driverMonitorLowAcc @68;
-<<<<<<< HEAD
-    lkasButtonOff @69;
-    rightLCAbsm @70;
-    leftLCAbsm @71;
-    preventLCA @72;
-    turningIndicatorOn @73;
-=======
     manualSteeringRequired @69;
     manualSteeringRequiredBlinkersOn @70;
 	  turningIndicatorOn @71;
@@ -110,7 +103,6 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     speedTooHigh @77;
     laneChangeBlocked @78;
     relayMalfunction @79;
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
   }
 }
 
@@ -172,11 +164,6 @@ struct CarState {
   # clutch (manual transmission only)
   clutchPressed @28 :Bool;
 
-<<<<<<< HEAD
-  lcaLeft @32 :Bool;
-  lcaRight @33 :Bool;
-  
-=======
   readdistancelines @36 :Float32;
   lkMode @35 :Bool;
   
@@ -185,7 +172,6 @@ struct CarState {
 
 
 
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
   # which packets this state came from
   canMonoTimes @12: List(UInt64);
 
@@ -424,18 +410,11 @@ struct CarParams {
   radarTimeStep @45: Float32 = 0.05;  # time delta between radar updates, 20Hz is very standard
   communityFeature @46: Bool;  # true if a community maintained feature is detected
   fingerprintSource @49: FingerprintSource;
-<<<<<<< HEAD
-  mdpsBus @50: Int8;
-  sasBus @51: Int8;
-  sccBus @52: Int8;
-  autoLcaEnabled @53: Int8;
-=======
   networkLocation @50 :NetworkLocation;  # Where Panda/C2 is integrated into the car's CAN network
   mdpsBus @51: Int8;
   sasBus @52: Int8;
   sccBus @53: Int8;
   autoLcaEnabled @54: Int8;
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
   struct LateralParams {
     torqueBP @0 :List(Int32);

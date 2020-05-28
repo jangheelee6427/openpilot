@@ -56,23 +56,6 @@ class CarInterface(CarInterfaceBase):
     ret.communityFeature = False
 
     ret.steerActuatorDelay = 0.1  # Default delay
-<<<<<<< HEAD
-    ret.steerRateCost = 0.5
-    ret.steerLimitTimer = 0.8
-    tire_stiffness_factor = 1.
-
-    if candidate in [CAR.SANTA_FE, CAR.SANTA_FE_1]:
-      ret.lateralTuning.pid.kf = 0.00005
-      ret.mass = 3982. * CV.LB_TO_KG + STD_CARGO_KG
-      ret.wheelbase = 2.766
-      # Values from optimizer
-      ret.steerRatio = 16.55  # 13.8 is spec end-to-end
-      tire_stiffness_factor = 0.82
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[9., 22.], [9., 22.]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.2, 0.35], [0.05, 0.09]]
-      ret.minSteerSpeed = 0.
-    elif candidate == CAR.KIA_SORENTO:
-=======
     ret.steerRateCost = 0.45
     ret.steerLimitTimer = 0.8
     tire_stiffness_factor = 0.75
@@ -86,20 +69,13 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.05], [0.01]]
     elif candidate == CAR.SORENTO:
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
       ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 1950. + STD_CARGO_KG
       ret.wheelbase = 2.78
       ret.steerRatio = 14.4 * 1.15
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-<<<<<<< HEAD
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
-      ret.minSteerSpeed = 0.
-    elif candidate in [CAR.ELANTRA, CAR.ELANTRA_GT_I30]:
-=======
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.05], [0.01]]
     elif candidate in [CAR.AVANTE, CAR.I30]:
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
       ret.lateralTuning.pid.kf = 0.00006
       ret.mass = 1275. + STD_CARGO_KG
       ret.wheelbase = 2.7
@@ -113,24 +89,14 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = 3.01
       ret.steerRatio = 16.5
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-<<<<<<< HEAD
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.16], [0.01]]
-      ret.minSteerSpeed = 60 * CV.KPH_TO_MS
-=======
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.05], [0.01]]
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     elif candidate in [CAR.GENESIS_G90, CAR.GENESIS_G80]:
       ret.mass = 2200
       ret.wheelbase = 3.15
       ret.steerRatio = 12.069
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-<<<<<<< HEAD
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.16], [0.01]]
-    elif candidate in [CAR.KIA_OPTIMA, CAR.KIA_OPTIMA_H]:
-=======
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.05], [0.01]]
     elif candidate in [CAR.K5, CAR.SONATA]:
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
       ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 1470. + STD_CARGO_KG
       ret.wheelbase = 2.80
@@ -175,30 +141,6 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = 2.78
       ret.steerRatio = 14.4 * 1.15   # 15% higher at the center seems reasonable
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-<<<<<<< HEAD
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
-      ret.minSteerSpeed = 0.
-    elif candidate == CAR.KONA:
-      ret.lateralTuning.pid.kf = 0.00006
-      ret.mass = 1275. + STD_CARGO_KG
-      ret.wheelbase = 2.7
-      ret.steerRatio = 13.73   #Spec
-      tire_stiffness_factor = 0.385
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
-    elif candidate == CAR.IONIQ:
-      ret.lateralTuning.pid.kf = 0.00004
-      ret.mass = 1275. + STD_CARGO_KG
-      ret.wheelbase = 2.7
-      ret.steerRatio = 10.1   #Spec
-      tire_stiffness_factor = 0.385
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.13], [0.009]]
-      ret.steerRateCost = 0.8
-    elif candidate == CAR.KONA_EV:
-      ret.lateralTuning.pid.kf = 0.00006
-      ret.mass = 1685. + STD_CARGO_KG
-=======
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.05], [0.01]]
     elif candidate == CAR.KONA:
       ret.lateralTuning.pid.kf = 0.00005
@@ -236,25 +178,10 @@ class CarInterface(CarInterfaceBase):
     elif candidate == CAR.IONIQ:
       ret.lateralTuning.pid.kf = 0.00006
       ret.mass = 1275. + STD_CARGO_KG
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
       ret.wheelbase = 2.7
       ret.steerRatio = 13.73   #Spec
       tire_stiffness_factor = 0.385
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-<<<<<<< HEAD
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
-    elif candidate == CAR.IONIQ_EV_LTD:
-      ret.lateralTuning.pid.kf = 0.00004
-      ret.mass = 1490. + STD_CARGO_KG   #weight per hyundai site https://www.hyundaiusa.com/ioniq-electric/specifications.aspx
-      ret.wheelbase = 2.7
-      ret.steerRatio = 10.1   #Tuned
-      tire_stiffness_factor = 0.385
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.13], [0.009]]
-      ret.minSteerSpeed = 32 * CV.MPH_TO_MS
-      ret.steerRateCost = 0.8 
-    elif candidate == CAR.KIA_FORTE:
-=======
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.05], [0.01]]
     elif candidate == CAR.IONIQ_EV:
       ret.lateralTuning.pid.kf = 0.00005
@@ -265,24 +192,12 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.05], [0.01]]
     elif candidate == CAR.K3:
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
       ret.lateralTuning.pid.kf = 0.00005
       ret.mass = 3558. * CV.LB_TO_KG
       ret.wheelbase = 2.80
       ret.steerRatio = 13.75
       tire_stiffness_factor = 0.5
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-<<<<<<< HEAD
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
-    elif candidate == CAR.KIA_SPORTAGE:
-      ret.lateralTuning.pid.kf = 0.00005
-      ret.mass = 1985. + STD_CARGO_KG
-      ret.wheelbase = 2.78
-      ret.steerRatio = 14.4 * 1.1   # 10% higher at the center seems reasonable
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.25], [0.05]]
-      ret.minSteerSpeed = 0.
-=======
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.05], [0.01]]
     elif candidate == CAR.NEXO:
       ret.lateralTuning.pid.kf = 0.00005
@@ -305,7 +220,6 @@ class CarInterface(CarInterfaceBase):
       ret.steerRatio = 13.0
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.05], [0.01]]
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
     ret.minEnableSpeed = -1.   # enable is done by stock ACC, so ignore this
 
@@ -351,11 +265,7 @@ class CarInterface(CarInterfaceBase):
     ret.sasBus = 1 if 688 in fingerprint[1] and 1296 not in fingerprint[1] else 0
     ret.sccBus = 0 if 1056 in fingerprint[0] else 1 if 1056 in fingerprint[1] and 1296 not in fingerprint[1] \
                                                                      else 2 if 1056 in fingerprint[2] else -1
-<<<<<<< HEAD
-    ret.autoLcaEnabled = 0
-=======
     ret.autoLcaEnabled = 1
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
     return ret
 
@@ -480,18 +390,6 @@ class CarInterface(CarInterfaceBase):
     ret.seatbeltUnlatched = not self.CS.seatbelt
 
     # low speed steer alert hysteresis logic (only for cars with steer cut off above 10 m/s)
-<<<<<<< HEAD
-    if ret.vEgo < (self.CP.minSteerSpeed + 0.2) and self.CP.minSteerSpeed > 10.:
-      self.low_speed_alert = True
-    if ret.vEgo > (self.CP.minSteerSpeed + 0.7):
-      self.low_speed_alert = False
-
-    # turning indicator alert logic
-    self.turning_indicator_alert = True if self.CC.turning_signal_timer and self.CS.v_ego < 16.7 else False
-
-    # LKAS button alert logic
-    self.lkas_button_alert = True if not self.CC.lkas_button else False
-=======
     if ret.vEgo < self.CP.minSteerSpeed and self.CP.minSteerSpeed > 10.:
       self.low_speed_alert = True
     if ret.vEgo > self.CP.minSteerSpeed:
@@ -506,7 +404,6 @@ class CarInterface(CarInterfaceBase):
 #      self.lkas_button_alert = True if self.CC.lkas_button else False
 #    if self.CP.carFingerprint in [CAR.GRANDEUR_HYBRID, CAR.K7_HYBRID]:
 #      self.lkas_button_alert = False
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
     events = []
     if not ret.gearShifter == GearShifter.drive:
@@ -541,21 +438,12 @@ class CarInterface(CarInterfaceBase):
       events.append(create_event('belowSteerSpeed', [ET.WARNING]))
     if self.turning_indicator_alert:
       events.append(create_event('turningIndicatorOn', [ET.WARNING]))
-<<<<<<< HEAD
-    if self.lkas_button_alert:
-      events.append(create_event('lkasButtonOff', [ET.WARNING]))
-    #TODO Varible for min Speed for LCA
-    if ret.rightBlinker and ret.lcaRight and self.CS.v_ego > (45 * CV.MPH_TO_MS):
-      events.append(create_event('rightLCAbsm', [ET.WARNING]))
-    if ret.leftBlinker and ret.lcaLeft and self.CS.v_ego > (45 * CV.MPH_TO_MS):
-=======
 #    if self.lkas_button_alert:
 #      events.append(create_event('lkasButtonOff', [ET.WARNING]))
     #TODO Varible for min Speed for LCA
     if ret.rightBlinker and ret.lcaRight and self.CS.v_ego > (60 * CV.KPH_TO_MS):
       events.append(create_event('rightLCAbsm', [ET.WARNING]))
     if ret.leftBlinker and ret.lcaLeft and self.CS.v_ego > (60 * CV.KPH_TO_MS):
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
       events.append(create_event('leftLCAbsm', [ET.WARNING]))
 
     ret.events = events

@@ -14,16 +14,11 @@ def get_radar_can_parser(CP):
     ("ACC_ObjDist", "SCC11", 0),
     ("ACC_ObjRelSpd", "SCC11", 0),
   ]
-<<<<<<< HEAD
-  checks = []
-  return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, CP.sccBus)
-=======
   checks = [
     # address, frequency
     ("SCC11", 50),
   ]
   return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
 
 class RadarInterface(RadarInterfaceBase):
@@ -35,17 +30,10 @@ class RadarInterface(RadarInterfaceBase):
     self.updated_messages = set()
     self.trigger_msg = 0x420
     self.track_id = 0
-<<<<<<< HEAD
-    self.no_radar = CP.sccBus == -1
-
-  def update(self, can_strings):
-    if self.no_radar:
-=======
     self.radar_off_can = CP.radarOffCan
 
   def update(self, can_strings):
     if self.radar_off_can:
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
       if 'NO_RADAR_SLEEP' not in os.environ:
         time.sleep(0.05)  # radard runs on RI updates
 
@@ -57,19 +45,11 @@ class RadarInterface(RadarInterfaceBase):
     if self.trigger_msg not in self.updated_messages:
       return None
 
-<<<<<<< HEAD
-    rr =  self._update(self.updated_messages)
-=======
     rr = self._update(self.updated_messages)
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
     self.updated_messages.clear()
 
     return rr
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
   def _update(self, updated_messages):
     ret = car.RadarData.new_message()
     cpt = self.rcp.vl

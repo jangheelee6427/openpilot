@@ -1,65 +1,3 @@
-<<<<<<< HEAD
-HKG Community information
-======
-
-This is the "Community fork" for Kia, Hyundai and Genesis.
-it is a fork of comma's openpilot: https://github.com/commaai/openpilot. It is open source and inherits MIT license.  By installing this software you accept all responsibility for anything that might occur while you use it.  All contributors to this fork are not liable.  <b>Use at your own risk.</b>
-
-<b>The port was started by Andrew Frahn of Emmertex, ku7 tech on youtube
-https://www.youtube.com/c/ku7tech
-I am going to try to mintain this fork for the commuinty, if you like it you can support me from here:  [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=JX92RNKXRPJKN&currency_code=USD&source=url)</b>
-
-Changes:
-------
-
-- <b>  Auto LCA:</b> credit to @SiGmAX666: Auto Lane change assist, no need for steering nudge. LCA will abort if driver override steering wheel. To enable Auto LCA(disabled by default),  change line 189 in selfdrive/car/hyundai/interface.py to:
-```python
-    ret.autoLcaEnabled = 1
-```
-- <b>  Enable by Cruise button:</b> Only for Car without long control, Openpilot will engage when turn cruise control on. To revert to SET button for enable, change line 54 in selfdrive/car/hyundai/carcontroller.py to:
-```python
-    self.longcontrol = 1
-```
-- <b>  Turning disable:</b> thank to Ku7: Openpilot will disable steering while turning signal on and speed below 60 kph, Enable again after 1 second. 
-- <b>  Increase driver monitoring timer</b>  
-- <b>  Disabling by LKAS button:</b> Openpilot will disable and enable steering by toggling LKAS button.
-- <b>  Setup Auto Detection:</b> Openpilot and Panda will detect MDPS, SCC and SAS buses and behaive acordingly.
-- <b>  Panda Universal Forwarding(PUF):</b> Panda will auto forwading for all CAN messages if Eon disconnected.
-
-
-
-
-Known issues
-------
-(temporarily fixed)LKAS fauls when driver override steering in opposite direction of Openpilot, it cause by Panda safety bolcking LKAS messages.
-
-HKG Supported Cars
-------
-
-To add new car or fingerprint, please make Pull Requset or send me the fingerprint along with below information:
-
-| Make      | Model (US Market Reference)        | Supported Package | ACC              | No ACC accel below | No ALC below |
-| ----------| -----------------------------------| ------------------| -----------------| -------------------| -------------|
-| Genesis   | G80 2018                           | All               | Stock            | 0mph               | 0mph         |
-| Genesis   | G90 2018                           | All               | Stock            | 0mph               | 0mph         |
-| Hyundai   | Elantra 2017-19<sup>5</sup>        | SCC + LKAS        | Stock            | 19mph              | 34mph        |
-| Hyundai   | Elantra GT/i30 2017-19             | All               | Stock            | 0mph               | 30mph        |
-| Hyundai   | Genesis 2018                       | All               | Stock            | 19mph              | 34mph        |
-| Hyundai   | Ioniq 2017<sup>5</sup>             | All               | Stock            | 0mph               | 34mph        |
-| Hyundai   | Kona 2017-19<sup>5</sup>           | LDWS              | Stock            | 22mph              | 0mph         |
-| Hyundai   | Santa Fe 2019<sup>5</sup>          | All               | Stock            | 0mph               | 0mph         |
-| Kia       | Forte 2018<sup>5</sup>             | LKAS              | Stock            | 0mph               | 0mph         |
-| Kia       | Forte 2019<sup>5</sup>             | LKAS              | Stock            | 0mph               | 0mph         |
-| Kia       | Optima 2017<sup>5</sup>            | SCC + LKAS/LDWS   | Stock            | 0mph               | 34mph        |
-| Kia       | Optima 2019<sup>5</sup>            | SCC + LKAS        | Stock            | 0mph               | 0mph         |
-| Kia       | Sorento 2018<sup>5</sup>           | All               | Stock            | 0mph               | 0mph         |
-| Kia       | Stinger 2018<sup>5</sup>           | SCC + LKAS        | Stock            | 0mph               | 0mph         |
-
-Known issues
-------
-
-
-=======
 ** Note that Honda stock AEB is disabled in 0.7.5 because of occassional issues on double lane curved highways where stock AEB activates when oncoming car detected - in 0.7.4 Honda stock AEB is enabled because unsafe mode in panda was not available yet in devel**
 
 
@@ -90,7 +28,6 @@ I will attempt to detail the changes in each of the branches here:
 <b>kegman-Clarity</b> - for Honda Clarity models
 
 * Thanks to @Clarity.bru and @wirelessnet2 for restoring the dashcam in 0.7.2
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
 
 Known bugs in 0.7.5:
@@ -102,12 +39,8 @@ Known bugs in 0.7.4:
 - GM working now thanks to @nic @clementcho and @beejayceeya for patient testing and error reporting
 - Honda Stock AEB re-enabled as per Comma's requirements for custom forks - will try to work on disabling at a later time
 
-<<<<<<< HEAD
-Any user of this software shall indemnify and hold harmless Comma.ai, Inc. and its directors, officers, employees, agents, stockholders, affiliates, subcontractors and customers from and against all allegations, claims, actions, suits, demands, damages, liabilities, obligations, losses, settlements, judgments, costs and expenses (including without limitation attorneys’ fees and costs) which arise out of, relate to or result from any use of this software by user.
-=======
 Known bugs in 0.7.3:
 -Some people may get their panda stuck on blinking blue led.  Reflash Panda, disconnect power from the panda for 1 minute and reconnect power. Reboot Eon and restart car.
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
 
 Known bugs in 0.7.1:
 - BoschGasPress also does not work as of Panda code refactoring by Comma

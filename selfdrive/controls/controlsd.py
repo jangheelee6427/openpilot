@@ -83,11 +83,6 @@ def data_sample(CI, CC, sm, can_sock, state, mismatch_counter, can_error_counter
   add_lane_change_event(events, sm['pathPlan'])
   enabled = isEnabled(state)
   lane_change_bsm = sm['pathPlan'].laneChangeBSM
-<<<<<<< HEAD
-  
-=======
-
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
   # Check for CAN timeout
   if not can_strs:
     can_error_counter += 1
@@ -98,21 +93,12 @@ def data_sample(CI, CC, sm, can_sock, state, mismatch_counter, can_error_counter
   low_battery = sm['thermal'].batteryPercent < 1 and sm['thermal'].chargingError  # at zero percent battery, while discharging, OP should not allowed
   mem_low = sm['thermal'].memUsedPercent > 90
 
-<<<<<<< HEAD
-  #bsm alerts 
-  if lane_change_bsm == LaneChangeBSM.left:
-    events.append(create_event('preventLCA', [ET.WARNING])) 
-  if lane_change_bsm == LaneChangeBSM.right:
-    events.append(create_event('preventLCA', [ET.WARNING]))
-    
-=======
   #bsm alerts
   if lane_change_bsm == LaneChangeBSM.left:
       events.append(create_event('preventLCA', [ET.WARNING]))
   if lane_change_bsm == LaneChangeBSM.right:
       events.append(create_event('preventLCA', [ET.WARNING]))
   
->>>>>>> 03a85678199cff8eae61763173c3553e23c6a1ec
   # Create events for battery, temperature and disk space
   if low_battery:
     events.append(create_event('lowBattery', [ET.NO_ENTRY, ET.SOFT_DISABLE]))
