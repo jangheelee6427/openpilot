@@ -689,19 +689,15 @@ static void bb_ui_draw_L_Extra(UIState *s)
 
     /*snprintf(str, sizeof(str), "P: %.5f", scene->pid_p);
     ui_draw_text(s->vg, text_x, y, str, 25 * 2.5, COLOR_WHITE_ALPHA(200), s->font_sans_regular);
-
     y += height;
     snprintf(str, sizeof(str), "I: %.5f", scene->pid_i);
     ui_draw_text(s->vg, text_x, y, str, 25 * 2.5, COLOR_WHITE_ALPHA(200), s->font_sans_regular);
-
     y += height;
     snprintf(str, sizeof(str), "F: %.5f", scene->pid_f);
     ui_draw_text(s->vg, text_x, y, str, 25 * 2.5, COLOR_WHITE_ALPHA(200), s->font_sans_regular);
-
     y += height;
     snprintf(str, sizeof(str), "D: %.5f", scene->pid_d);
     ui_draw_text(s->vg, text_x, y, str, 25 * 2.5, COLOR_WHITE_ALPHA(200), s->font_sans_regular);
-
     y += height;
     snprintf(str, sizeof(str), "O: %.5f", scene->pid_output);
     ui_draw_text(s->vg, text_x, y, str, 25 * 2.5, COLOR_WHITE_ALPHA(200), s->font_sans_regular);*/
@@ -709,23 +705,18 @@ static void bb_ui_draw_L_Extra(UIState *s)
 
     /*snprintf(str, sizeof(str), "RS: %.5f", scene->indi.getRateSetPoint());
     ui_draw_text(s->vg, text_x, y, str, 25 * 2.5, COLOR_WHITE_ALPHA(200), s->font_sans_regular);
-
     y += height;
     snprintf(str, sizeof(str), "AS: %.5f", scene->indi.getAccelSetPoint());
     ui_draw_text(s->vg, text_x, y, str, 25 * 2.5, COLOR_WHITE_ALPHA(200), s->font_sans_regular);
-
     y += height;
     snprintf(str, sizeof(str), "AE: %.5f", scene->indi.getAccelError());
     ui_draw_text(s->vg, text_x, y, str, 25 * 2.5, COLOR_WHITE_ALPHA(200), s->font_sans_regular);
-
     y += height;
     snprintf(str, sizeof(str), "DO: %.5f", scene->indi.getDelayedOutput());
     ui_draw_text(s->vg, text_x, y, str, 25 * 2.5, COLOR_WHITE_ALPHA(200), s->font_sans_regular);
-
     y += height;
     snprintf(str, sizeof(str), "D: %.5f", scene->indi.getDelta());
     ui_draw_text(s->vg, text_x, y, str, 25 * 2.5, COLOR_WHITE_ALPHA(200), s->font_sans_regular);
-
     y += height;
     snprintf(str, sizeof(str), "O: %.5f", scene->indi.getOutput());
     ui_draw_text(s->vg, text_x, y, str, 25 * 2.5, COLOR_WHITE_ALPHA(200), s->font_sans_regular);*/
