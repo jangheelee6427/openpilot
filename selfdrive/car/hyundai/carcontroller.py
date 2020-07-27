@@ -8,6 +8,7 @@ from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create
 from selfdrive.car.hyundai.values import Buttons, SteerLimitParams, CAR, FEATURES
 from opendbc.can.packer import CANPacker
 from selfdrive.config import Conversions as CV
+from selfdrive.car.hyundai.spdcontroller  import SpdController
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 min_set_speed = 30 * CV.KPH_TO_MS
@@ -82,10 +83,24 @@ class CarController():
             self.en_spas = 3
             self.mdps11_stat_last = 0
             self.spas_always = False
+        #janpoo6427
+        self.SC = None
+        self.speed_control_enabled = 1
+        self.timer_curvature = 0
+        self.SC = SpdController()
+        self.sc_wait_timer2 = 0
+        self.sc_active_timer2 = 0     
+        self.sc_btn_type = Buttons.NONE
+        self.sc_clu_speed = 0
 
     def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
-               left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible):
+               left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible, sm, LaC):
 
+        #janpoo6427
+        v_ego_kph = CS.v_ego * CV.MS_TO_KPH
+        dRel, yRel, vRel = self.SC.get_lead( sm, CS )
+        vRel = int(vRel * 3.6 + 0.5)
+        
         # *** compute control surfaces ***
 
         # gas and brake
@@ -203,6 +218,56 @@ class CarController():
 
         if CS.mdps_bus:  # send mdps12 to LKAS to prevent LKAS error
             can_sends.append(create_mdps12(self.packer, frame, CS.mdps12))
+
+
+
+        #속도 제어로직
+        if CS.driverOverride == 2 or not CS.pcm_acc_status or CS.clu_CruiseSwState == 1 or CS.clu_CruiseSwState == 2:
+            #self.model_speed = 300
+            self.resume_cnt = 0
+            self.sc_btn_type = Buttons.NONE
+            self.sc_wait_timer2 = 10
+            self.sc_active_timer2 = 0
+        elif self.sc_wait_timer2:
+            self.sc_wait_timer2 -= 1
+            
+            #stock 모드가 아닐 경우에만 반영
+        elif self.speed_control_enabled and CS.cruise_set_mode != 0:
+            #acc_mode, clu_speed = self.long_speed_cntrl( v_ego_kph, CS, actuators )
+            btn_type, clu_speed = self.SC.update( v_ego_kph, CS, sm, actuators, dRel, yRel, vRel, LaC.v_curvature )   # speed controller spdcontroller.py
+
+            if CS.clu_Vanz < 5:
+                self.sc_btn_type = Buttons.NONE
+            elif self.sc_btn_type != Buttons.NONE:
+                pass
+            elif btn_type != Buttons.NONE:
+                self.resume_cnt = 0
+                self.sc_active_timer2 = 0
+                self.sc_btn_type = btn_type
+                self.sc_clu_speed = clu_speed
+
+            if self.sc_btn_type != Buttons.NONE:
+                self.sc_active_timer2 += 1
+                if self.sc_active_timer2 > 10:
+                    self.sc_wait_timer2 = 5
+                    self.resume_cnt = 0
+                    self.sc_active_timer2 = 0
+                    self.sc_btn_type = Buttons.NONE          
+                else:
+                    # 0, 1, 2 모드에서는  Set 상태에서만 가감속 전달
+                    if CS.cruise_set:
+                        #self.traceCC.add( 'sc_btn_type={}  clu_speed={}  set={:.0f} vanz={:.0f}'.format( self.sc_btn_type, self.sc_clu_speed,  CS.VSetDis, clu11_speed  ) )
+                        print("cruise set-> "+ str(self.sc_btn_type))
+                        can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, self.sc_btn_type, self.sc_clu_speed))
+                    # Set이 아니면서 3 모드이면 가감속 신호 전달
+                    elif CS.cruise_set_mode ==3 and CS.clu_Vanz > 30:
+                        print("cruise auto set-> "+ str(self.sc_btn_type))
+                        can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, self.sc_btn_type, self.sc_clu_speed))
+                        
+
+                    self.resume_cnt += 1
+
+
 
         # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
         if self.longcontrol and (CS.scc_bus or not self.scc_live) and frame % 2 == 0:
