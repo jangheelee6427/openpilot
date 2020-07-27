@@ -128,6 +128,10 @@ class CarController():
                 self.turning_signal_timer = 100  # Disable for 1.0 Seconds after blinker turned off
             elif CS.left_blinker_flash or CS.right_blinker_flash:  # Optima has blinker flash signal only
                 self.turning_signal_timer = 100
+        # 원터치도 인식되게 변경
+        elif CS.left_blinker_flash or CS.right_blinker_flash:  # Optima has blinker flash signal only
+                self.turning_signal_timer = 100
+
         if self.turning_indicator_alert:  # set and clear by interface
             lkas_active = 0
         if self.turning_signal_timer > 0:

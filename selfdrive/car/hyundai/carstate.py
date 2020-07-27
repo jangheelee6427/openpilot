@@ -180,6 +180,8 @@ class CarState(CarStateBase):
      
 
     ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
+    #계기판 속도를 화면에 표시
+    ret.vEgo = self.clu_Vanz * CV.KPH_TO_MS
 
     ret.standstill = ret.vEgoRaw < 0.1
 
