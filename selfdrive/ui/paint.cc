@@ -898,8 +898,14 @@ static void ui_draw_vision_speed(UIState *s) {
   const UIScene *scene = &s->scene;
   float v_ego = s->scene.controls_state.getVEgo();
   float speed = v_ego * 2.2369363 + 0.5;
-  if (s->is_metric){
-    speed = v_ego * 3.6 + 0.5;
+  
+  // if (s->is_metric){
+  //   speed = v_ego * 3.6 + 0.5;
+  // }
+  float speedlimit = s->scene.speedlimit;
+  int speedlim_calc = speedlimit * 2.2369363 + 0.5;
+  if (s->is_metric) {
+    speedlim_calc = speedlimit * 3.6 + 0.5;
   }
   const int viz_speed_w = 280;
   const int viz_speed_x = scene->ui_viz_rx+((scene->ui_viz_rw/2)-(viz_speed_w/2));
@@ -927,18 +933,37 @@ static void ui_draw_vision_event(UIState *s) {
     const int bg_wheel_size = 96;
     const int bg_wheel_x = viz_event_x + (viz_event_w-bg_wheel_size);
     const int bg_wheel_y = viz_event_y + (bg_wheel_size/2);
-    NVGcolor color = COLOR_BLACK_ALPHA(0);
-    if (s->status == STATUS_ENGAGED) {
-      color = nvgRGBA(23, 134, 68, 255);
-    } else if (s->status == STATUS_WARNING) {
-      color = COLOR_OCHRE;
-    } else {
-      color = nvgRGBA(23, 51, 73, 255);
+    const int img_wheel_size = bg_wheel_size*1.5;
+    const int img_wheel_x = bg_wheel_x-(img_wheel_size/2);
+    const int img_wheel_y = bg_wheel_y-25;
+    const float img_rotation = s->scene.angleSteers/180*3.141592;
+    float img_wheel_alpha = 0.1f;
+    bool is_engaged = (s->status == STATUS_ENGAGED) && !scene->steerOverride;
+    bool is_warning = (s->status == STATUS_WARNING);
+    bool is_engageable = scene->engageable;
+    if (is_engaged || is_warning || is_engageable) {
+      nvgBeginPath(s->vg);
+      nvgCircle(s->vg, bg_wheel_x, (bg_wheel_y + (bdr_is*1.5)), bg_wheel_size);
+      if (is_engaged) {
+        nvgFillColor(s->vg, nvgRGBA(23, 134, 68, 255));
+      } else if (is_warning) {
+        nvgFillColor(s->vg, nvgRGBA(218, 111, 37, 255));
+      } else if (is_engageable) {
+        nvgFillColor(s->vg, nvgRGBA(23, 51, 73, 255));
+      }
+      nvgFill(s->vg);
+      img_wheel_alpha = 1.0f;
     }
-
-    if (s->scene.controls_state.getEngageable()){
-      ui_draw_circle_image(s->vg, bg_wheel_x, bg_wheel_y, bg_wheel_size, s->img_wheel, color, 1.0f, bg_wheel_y - 25);
-    }
+    nvgSave(s->vg);
+    nvgTranslate(s->vg,bg_wheel_x,(bg_wheel_y + (bdr_s*1.5)));
+    nvgRotate(s->vg,-img_rotation);
+    nvgBeginPath(s->vg);
+    NVGpaint imgPaint = nvgImagePattern(s->vg, img_wheel_x-bg_wheel_x, img_wheel_y-(bg_wheel_y + (bdr_s*1.5)),
+	  img_wheel_size, img_wheel_size, 0, s->img_wheel, img_wheel_alpha);
+    nvgRect(s->vg, img_wheel_x-bg_wheel_x, img_wheel_y-(bg_wheel_y + (bdr_s*1.5)), img_wheel_size, img_wheel_size);
+    nvgFillPaint(s->vg, imgPaint);
+    nvgFill(s->vg);
+    nvgRestore(s->vg);
   }
 }
 
