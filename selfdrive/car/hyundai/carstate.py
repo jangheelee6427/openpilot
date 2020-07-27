@@ -201,6 +201,7 @@ class CarState(CarStateBase):
     ret.cruiseState.available = bool(cp.vl['EMS16']['CRUISE_LAMP_M'])
                                 #(cp_scc.vl["SCC11"]["MainMode_ACC"] != 0) if not self.no_radar else \
                                 #      cp.vl['EMS16']['CRUISE_LAMP_M'] != 0
+    self.cruise_set = cp.vl['EMS16']['CRUISE_LAMP_S'] 
 
     self.pcm_acc_status = int(ret.cruiseState.available)
 
