@@ -160,7 +160,7 @@ class SpdController():
                         self.VSetDis = 0
 
                 #버튼을 누르고 있는 동안
-                elif self.prev_clu_CruiseSwState ==  CS.cruiseclu_CruiseSwState_buttons:
+                elif self.prev_clu_CruiseSwState ==  CS.clu_CruiseSwState:
                     print("버튼 연속 누름 "+ str(self.prev_clu_CruiseSwState) + " " + str(CS.clu_CruiseSwState))
                     #100ms 이내이면 패스
                     if self.cruise_btn_time < 100:
