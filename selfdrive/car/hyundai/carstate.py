@@ -24,6 +24,7 @@ class CarState(CarStateBase):
     self.lkas_button_on = True
 
     self.SC = SpdController()
+    self.cruise_buttons = 0
 
 
   def update(self, cp, cp2, cp_cam):
@@ -85,6 +86,10 @@ class CarState(CarStateBase):
     self.is_set_speed_in_mph = int(cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"])
 
     
+    # spd state update
+    self.cruise_buttons = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]         # clu_CruiseSwState
+
+
     if ret.cruiseState.enabled:
       speed_conv = CV.MPH_TO_MS if self.is_set_speed_in_mph else CV.KPH_TO_MS
       
