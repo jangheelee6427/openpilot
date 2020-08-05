@@ -70,16 +70,7 @@ class CarState(CarStateBase):
     ret.steerWarning = cp_mdps.vl["MDPS12"]['CF_Mdps_ToiUnavail'] != 0
 
     self.cruise_lamp_set = bool(cp.vl['EMS16']['CRUISE_LAMP_S'])
-    
-    self.main_on = bool(cp.vl['EMS16']['CRUISE_LAMP_M'])  #(cp_scc.vl["SCC11"]["MainMode_ACC"] != 0) if not self.no_radar else \
-                                                    #                         cp.vl['EMS16']['CRUISE_LAMP_M']
-    self.acc_active = bool(cp.vl['EMS16']['CRUISE_LAMP_M']) #(cp_scc.vl["SCC12"]['ACCMode'] != 0) if not self.no_radar else \
-                                                      #                (cp.vl["LVR12"]['CF_Lvr_CruiseSet'] != 0)
 
-    
-    
-    
-    
     # cruise state
     if self.car_fingerprint in FEATURES["none_scc"]:
       self.main_on = bool(cp.vl['EMS16']['CRUISE_LAMP_M'])  #(cp_scc.vl["SCC11"]["MainMode_ACC"] != 0) if not self.no_radar else \

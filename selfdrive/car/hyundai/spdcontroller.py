@@ -99,7 +99,7 @@ class SpdController():
 
         self.cruise_set_speed = 0
         self.cruise_set_first = 0
-        self.cruise_sw_check = 0
+        #self.cruise_sw_check = 0
         self.prev_clu_CruiseSwState = 0    
         self.cruise_set_mode = 2
         self.cruise_btn_time = 0
@@ -198,7 +198,7 @@ class SpdController():
             #  self.curise_sw_check = True
                 #set_speed =  int(self.VSetDis)
         else:
-            self.cruise_sw_check = False
+            #self.cruise_sw_check = False
             self.cruise_set_first = 1
 
             #self.prev_VSetDis = int(CS.VSetDis)
