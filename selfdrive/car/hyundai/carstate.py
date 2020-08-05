@@ -24,8 +24,11 @@ class CarState(CarStateBase):
     self.lkas_button_on = True
 
     self.SC = SpdController()
-    self.cruise_buttons = 0
-
+    
+    self.clu_CruiseSwState = 0
+    self.main_on = False
+    self.acc_active = False
+    self.cruise_lamp_set = False
 
   def update(self, cp, cp2, cp_cam):
     cp_mdps = cp2 if self.mdps_bus else cp
@@ -66,28 +69,49 @@ class CarState(CarStateBase):
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD
     ret.steerWarning = cp_mdps.vl["MDPS12"]['CF_Mdps_ToiUnavail'] != 0
 
+    self.cruise_lamp_set = bool(cp.vl['EMS16']['CRUISE_LAMP_S'])
+    
+    self.main_on = bool(cp.vl['EMS16']['CRUISE_LAMP_M'])  #(cp_scc.vl["SCC11"]["MainMode_ACC"] != 0) if not self.no_radar else \
+                                                    #                         cp.vl['EMS16']['CRUISE_LAMP_M']
+    self.acc_active = bool(cp.vl['EMS16']['CRUISE_LAMP_M']) #(cp_scc.vl["SCC12"]['ACCMode'] != 0) if not self.no_radar else \
+                                                      #                (cp.vl["LVR12"]['CF_Lvr_CruiseSet'] != 0)
+
+    
+    
+    
+    
     # cruise state
     if self.car_fingerprint in FEATURES["none_scc"]:
-      ret.cruiseState.enabled = bool(cp.vl['EMS16']['CRUISE_LAMP_M']) 
-      ret.cruiseState.available = bool(cp.vl['EMS16']['CRUISE_LAMP_M'])
+      self.main_on = bool(cp.vl['EMS16']['CRUISE_LAMP_M'])  #(cp_scc.vl["SCC11"]["MainMode_ACC"] != 0) if not self.no_radar else \
+                                                    #                         cp.vl['EMS16']['CRUISE_LAMP_M']
+      self.acc_active = bool(cp.vl['EMS16']['CRUISE_LAMP_M']) #(cp_scc.vl["SCC12"]['ACCMode'] != 0) if not self.no_radar else \
+                                                      #                (cp.vl["LVR12"]['CF_Lvr_CruiseSet'] != 0)
     else:
-      ret.cruiseState.enabled = (cp_scc.vl["SCC12"]['ACCMode'] != 0) if not self.no_radar else \
-                                        (cp.vl["LVR12"]['CF_Lvr_CruiseSet'] != 0)
-      ret.cruiseState.available = (cp_scc.vl["SCC11"]["MainMode_ACC"] != 0) if not self.no_radar else \
-                                              cp.vl['EMS16']['CRUISE_LAMP_M']
+      self.main_on = (cp_scc.vl["SCC11"]["MainMode_ACC"] != 0) if not self.no_radar else cp.vl['EMS16']['CRUISE_LAMP_M']
+      self.acc_active = (cp_scc.vl["SCC12"]['ACCMode'] != 0) if not self.no_radar else (cp.vl["LVR12"]['CF_Lvr_CruiseSet'] != 0)
+
+
+
+    ret.cruiseState.available = self.main_on if not self.no_radar else \
+                                      cp.vl['EMS16']['CRUISE_LAMP_M'] != 0
+    ret.cruiseState.enabled =  ret.cruiseState.available  #if not self.CP.longcontrolEnabled else ret.cruiseState.enabled
+    
+
 
     #janpoo6427
     #self.VSetDis = cp_scc.vl["SCC11"]['VSetDis']
 
     ret.cruiseState.standstill = cp_scc.vl["SCC11"]['SCCInfoDisplay'] == 4. if not self.no_radar else False
 
-    ret.cruiseState.cruiseButtons = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]
+    
+    # spd state update
+    self.clu_CruiseSwState = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]         # clu_CruiseSwState
+
 
     self.is_set_speed_in_mph = int(cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"])
 
     
-    # spd state update
-    self.cruise_buttons = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]         # clu_CruiseSwState
+    
 
 
     if ret.cruiseState.enabled:
